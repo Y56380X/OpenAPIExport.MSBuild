@@ -1,0 +1,9 @@
+<Project TreatAsLocalProperty="TaskFolder;TaskAssembly">
+    <UsingTask 
+            TaskName="OpenAPIExport.MSBuild.UpdateApiSpecification" 
+            AssemblyFile="$(MSBuildThisFileDirectory)..\tasks\net6.0\OpenAPIExport.MSBuild.dll" />
+
+    <Target Name="RunUpdateApiSpecification" AfterTargets="Build">
+        <UpdateApiSpecification />
+    </Target>
+</Project>
