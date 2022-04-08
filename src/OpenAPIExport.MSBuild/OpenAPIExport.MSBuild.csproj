@@ -19,9 +19,7 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <Content Include="..\..\LICENSE">
-          <Link>LICENSE</Link>
-        </Content>
+        <None Include="../../LICENSE" Pack="true" PackagePath="" />
         <Content Include="OpenAPIExport.MSBuild.props" PackagePath="build/" />
     </ItemGroup>
 
