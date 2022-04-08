@@ -9,8 +9,13 @@
         
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         
-        <PackageVersion>0.1</PackageVersion>
+        <PackageVersion>1.0</PackageVersion>
         <Authors>Y56380X</Authors>
+        <Title>OpenAPIExport.MSBuild</Title>
+        <Copyright>Copyright (c) 2022 Y56380X</Copyright>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageProjectUrl>https://github.com/Y56380X/OpenAPIExport.MSBuild</PackageProjectUrl>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
     </PropertyGroup>
     
     <ItemGroup>
