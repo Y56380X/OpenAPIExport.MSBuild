@@ -22,6 +22,10 @@
             AssemblyFile="$(MSBuildThisFileDirectory)..\tasks\net6.0\OpenAPIExport.MSBuild.dll" />
 
     <Target Name="RunUpdateApiSpecification" AfterTargets="CopyFilesToOutputDirectory">
-        <UpdateApiSpecification TargetAssemblyPath="$(TargetPath)" SolutionDirectory="$(SolutionDir)" />
+        <UpdateApiSpecification 
+                TargetAssemblyPath="$(TargetPath)" 
+                SolutionDirectory="$(SolutionDir)"
+                ExportPath="$(OpenApiExportPath)"
+                ServerPort="$(OpenApiExportPort)"/>
     </Target>
 </Project>

@@ -30,13 +30,22 @@ namespace OpenAPIExport.MSBuild;
 public class UpdateApiSpecification : Task
 {
 	public ITaskItem TargetAssemblyPath { get; set; }
-	
 	public ITaskItem SolutionDirectory { get; set; }
+	public ITaskItem? ExportPath { get; set; }
+	public ITaskItem? ServerPort { get; set; }
 	
 	public override bool Execute()
 	{
 		Log.LogMessage(MessageImportance.High, $"Running {nameof(UpdateApiSpecification)}");
 
+		// Set variables
+		var path = ExportPath is {} exportPath
+			? exportPath.ToString()!
+			: Path.Combine(SolutionDirectory.ToString()!, "doc", "api-doc.yaml");
+		var port = ServerPort is {} exportPort
+			? int.Parse(exportPort.ToString()!)
+			: 5005;
+		
 		// Start api
 		var targetAssembly = new FileInfo(TargetAssemblyPath.ToString()!);
 		var apiStartInfo = new ProcessStartInfo("dotnet")
@@ -44,7 +53,7 @@ public class UpdateApiSpecification : Task
 			ArgumentList =
 			{
 				targetAssembly.FullName,
-				"--urls=http://localhost:5005/"
+				$"--urls=http://localhost:{port}/"
 			},
 			EnvironmentVariables =
 			{
@@ -63,7 +72,7 @@ public class UpdateApiSpecification : Task
 			Thread.Sleep(TimeSpan.FromSeconds(2));
 			try
 			{
-				response = httpClient.GetAsync("http://localhost:5005/swagger/v1/swagger.yaml").Result;
+				response = httpClient.GetAsync($"http://localhost:{port}/swagger/v1/swagger.yaml").Result;
 				response.EnsureSuccessStatusCode();
 			}
 			catch
@@ -76,8 +85,7 @@ public class UpdateApiSpecification : Task
 		// If download successful, update doc file
 		if (response != null)
 		{
-			File.WriteAllBytes(Path.Combine(SolutionDirectory.ToString()!, "doc", "api-doc.yaml"),
-				response.Content.ReadAsByteArrayAsync().Result);
+			File.WriteAllBytes(path, response.Content.ReadAsByteArrayAsync().Result);
 			Log.LogMessage(MessageImportance.High, "Updating API Specification successful");
 		}
 		
