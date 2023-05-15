@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2022 Y56380X
+	Copyright (c) 2022-2023 Y56380X
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
 	in the Software without restriction, including without limitation the rights
@@ -33,6 +33,8 @@ public class UpdateApiSpecification : Task
 	public ITaskItem SolutionDirectory { get; set; }
 	public ITaskItem? ExportPath { get; set; }
 	public ITaskItem? ServerPort { get; set; }
+	public ITaskItem? RetryCount { get; set; }
+	public ITaskItem? RetryInterval { get; set; }
 	
 	public override bool Execute()
 	{
@@ -45,6 +47,12 @@ public class UpdateApiSpecification : Task
 		var port = ServerPort is {} exportPort
 			? int.Parse(exportPort.ToString()!)
 			: 5005;
+		var retryLimit = RetryCount is {} retryCount
+			? int.Parse(retryCount.ToString()!)
+			: 5;
+		var retryIntervalSeconds = RetryInterval is { } retryInterval
+			? int.Parse(retryInterval.ToString()!)
+			: 2;
 		
 		// Start api
 		var targetAssembly = new FileInfo(TargetAssemblyPath.ToString()!);
@@ -69,7 +77,7 @@ public class UpdateApiSpecification : Task
 		HttpResponseMessage? response;
 		do
 		{
-			Thread.Sleep(TimeSpan.FromSeconds(2));
+			Thread.Sleep(TimeSpan.FromSeconds(retryIntervalSeconds));
 			try
 			{
 				response = httpClient.GetAsync($"http://localhost:{port}/swagger/v1/swagger.yaml").Result;
@@ -80,7 +88,7 @@ public class UpdateApiSpecification : Task
 				response = null;
 				tries++;
 			}
-		} while (tries < 3 && !(response?.IsSuccessStatusCode ?? false));
+		} while (tries < retryLimit && !(response?.IsSuccessStatusCode ?? false));
 
 		// If download successful, update doc file
 		if (response != null)
