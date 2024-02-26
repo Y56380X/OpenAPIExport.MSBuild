@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
         
         <Nullable>enable</Nullable>
         
@@ -9,13 +9,14 @@
         
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         
-        <PackageVersion>1.2</PackageVersion>
+        <PackageVersion>1.3</PackageVersion>
         <Authors>Y56380X</Authors>
         <Title>OpenAPIExport.MSBuild</Title>
-        <Copyright>Copyright (c) 2022-2023 Y56380X</Copyright>
+        <Copyright>Copyright (c) 2022-2024 Y56380X</Copyright>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageProjectUrl>https://github.com/Y56380X/OpenAPIExport.MSBuild</PackageProjectUrl>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Description>Exports generated open api specification during build</Description>
         <RepositoryUrl>https://github.com/Y56380X/OpenAPIExport.MSBuild</RepositoryUrl>
         <RepositoryType>GitHub</RepositoryType>
@@ -23,12 +24,13 @@
     
     <ItemGroup>
         <None Include="../../LICENSE" Pack="true" PackagePath="" />
+        <None Include="../../README.md" Pack="true" PackagePath="" />
         <Content Include="OpenAPIExport.MSBuild.props" PackagePath="build/" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Build.Framework" Version="17.1.0" />
-      <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.1.0" />
+      <PackageReference Include="Microsoft.Build.Framework" Version="17.9.5" />
+      <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.9.5" />
     </ItemGroup>
     
 </Project>
