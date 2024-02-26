@@ -1,5 +1,5 @@
 /*
-	Copyright (c) 2022-2023 Y56380X
+	Copyright (c) 2022-2024 Y56380X
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
 	in the Software without restriction, including without limitation the rights
@@ -33,6 +33,7 @@ public class UpdateApiSpecification : Task
 	public ITaskItem SolutionDirectory { get; set; }
 	public ITaskItem? ExportPath { get; set; }
 	public ITaskItem? ServerPort { get; set; }
+	public ITaskItem? ExportSource { get; set; }
 	public ITaskItem? RetryCount { get; set; }
 	public ITaskItem? RetryInterval { get; set; }
 	
@@ -47,6 +48,9 @@ public class UpdateApiSpecification : Task
 		var port = ServerPort is {} exportPort
 			? int.Parse(exportPort.ToString()!)
 			: 5005;
+		var source = ExportSource is { } exportSource
+			? exportSource.ToString()!
+			: "swagger/v1/swagger.yaml";
 		var retryLimit = RetryCount is {} retryCount
 			? int.Parse(retryCount.ToString()!)
 			: 5;
@@ -54,7 +58,7 @@ public class UpdateApiSpecification : Task
 			? int.Parse(retryInterval.ToString()!)
 			: 2;
 		
-		// Start api
+		// Start api application
 		var targetAssembly = new FileInfo(TargetAssemblyPath.ToString()!);
 		var apiStartInfo = new ProcessStartInfo("dotnet")
 		{
@@ -74,13 +78,14 @@ public class UpdateApiSpecification : Task
 		// Download swagger doc
 		var tries = 0;
 		using var httpClient = new HttpClient();
+		httpClient.BaseAddress = new Uri($"http://localhost:{port}/");
 		HttpResponseMessage? response;
 		do
 		{
 			Thread.Sleep(TimeSpan.FromSeconds(retryIntervalSeconds));
 			try
 			{
-				response = httpClient.GetAsync($"http://localhost:{port}/swagger/v1/swagger.yaml").Result;
+				response = httpClient.GetAsync(source).Result;
 				response.EnsureSuccessStatusCode();
 			}
 			catch
@@ -90,17 +95,17 @@ public class UpdateApiSpecification : Task
 			}
 		} while (tries < retryLimit && !(response?.IsSuccessStatusCode ?? false));
 
+		// Stop api application
+		apiProcess.Kill();
+		apiProcess.WaitForExit();
+		
 		// If download successful, update doc file
-		if (response != null)
+		if (response is { IsSuccessStatusCode: true })
 		{
 			File.WriteAllBytes(path, response.Content.ReadAsByteArrayAsync().Result);
 			Log.LogMessage(MessageImportance.High, "Updating API Specification successful");
 		}
 		
-		// Clean up
-		apiProcess.Kill();
-		apiProcess.WaitForExit();
-		
-		return response != null;
+		return response is { IsSuccessStatusCode: true };
 	}
 }

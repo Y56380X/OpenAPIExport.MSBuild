@@ -14,5 +14,6 @@ Threre are some configuration options for the MSBuild task executed during api b
 
 * `OpenApiExportPath`: file path for saving swagger doc (default: `$(SolutionDirectory)/doc/api-doc.yaml`)
 * `OpenApiExportPort`: port where the build time api runs on (default: `5005`)
+* `OpenApiExportSource`: relative source path of swagger doc (default: `swagger/v1/swagger.yaml`)
 * `OpenApiExportRetryCount`: specify how many retries are made for downloading the swagger doc (default: `5`)
 * `OpenApiExportRetryInterval`: specify the waiting time in seconds before every downloading try (default: `2`)
