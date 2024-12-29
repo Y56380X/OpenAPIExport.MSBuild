@@ -45,12 +45,15 @@ public class UpdateApiSpecification : Task
 		var path = ExportPath is {} exportPath
 			? exportPath.ToString()!
 			: Path.Combine(SolutionDirectory.ToString()!, "doc", "api-doc.yaml");
+		Log.LogMessage(MessageImportance.Low, $"Path: {path}");
 		var port = ServerPort is {} exportPort
 			? int.Parse(exportPort.ToString()!)
 			: 5005;
+		Log.LogMessage(MessageImportance.Low, $"Port: {port}");
 		var source = ExportSource is { } exportSource
 			? exportSource.ToString()!
 			: "swagger/v1/swagger.yaml";
+		Log.LogMessage(MessageImportance.Low, $"Source: {source}");
 		var retryLimit = RetryCount is {} retryCount
 			? int.Parse(retryCount.ToString()!)
 			: 5;
@@ -60,6 +63,7 @@ public class UpdateApiSpecification : Task
 		
 		// Start api application
 		var targetAssembly = new FileInfo(TargetAssemblyPath.ToString()!);
+		Log.LogMessage(MessageImportance.Low, $"Assembly: {targetAssembly}");
 		var apiStartInfo = new ProcessStartInfo("dotnet")
 		{
 			ArgumentList =
